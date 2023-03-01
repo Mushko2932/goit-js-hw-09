@@ -1,6 +1,6 @@
 import flatpickr from 'flatpickr';
-import { convertMs } from './converter';
-import {addLeadingZero} from './converter';
+import { convertMs } from './convert-time';
+import {addLeadingZero} from './convert-time';
 import Notiflix from 'notiflix';
 import 'flatpickr/dist/flatpickr.min.css';
 
