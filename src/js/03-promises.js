@@ -10,24 +10,45 @@ const refs = {
 };
 
 // вішаємо слухача
-refs.formValue.addEventListener('submit', createPromise);
-refs.btnCreate.addEventListener('click', () => {
-  console.log('click')
-})
+refs.formValue.addEventListener('submit', onSubmitForm);
 
-function createPromise(position, delay) {
-  const shouldResolve = Math.random() > 0.3;
-  if (shouldResolve) {
-    // Fulfill
-  } else {
-    // Reject
+// створюємо ф-ю на момент сабміту форми
+function onSubmitForm(e) {
+  e.preventDefault();
+
+  let delay = Number(refs.formValue.delay.value);
+
+  for (let i = 1; i <= refs.formValue.amount.value; i += 1) {
+    createPromise(i, delay)
+      .then(({ position, delay }) => {
+        Notiflix.Notify.success(
+          `✅ Fulfilled promise ${position} in ${delay}ms`
+        );
+      })
+      .catch(({ position, delay }) => {
+        Notiflix.Notify.failure(
+          `❌ Rejected promise ${position} in ${delay}ms`
+        );
+      });
+    delay += Number(refs.formValue.step.value);
   }
 }
 
-createPromise(2, 1500)
-  .then(({ position, delay }) => {
-    Notiflix.Notify.success(`✅ Fulfilled promise ${position} in ${delay}ms`);
-  })
-  .catch(({ position, delay }) => {
-    Notiflix.Notify.failure(`❌ Rejected promise ${position} in ${delay}ms`);
+// повертаємо один проміс
+function createPromise(position, delay) {
+  const object = { position, delay };
+  const shouldResolve = Math.random() > 0.3;
+
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      if (shouldResolve) {
+        // Fulfill
+        resolve(object);
+      } else {
+        // Reject
+        reject(object);
+      }
+    }, delay);
   });
+}
+
